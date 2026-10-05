@@ -1,4 +1,4 @@
-# img-creator — Always-On Rules
+# Obskura — Always-On Rules
 
 Ces règles s'appliquent à chaque session Claude sur ce projet. Sans exception.
 

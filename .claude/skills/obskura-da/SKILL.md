@@ -1,6 +1,6 @@
 ---
-name: img-creator-da
-description: Direction artistique d'Obskura (img-creator) — jetons papier/encre, typographie, primitives, ton des libellés, règles de sélection. À charger avant de toucher un composant sous components/atelier/ ou app/globals.css.
+name: obskura-da
+description: Direction artistique d'Obskura — jetons papier/encre, typographie, primitives, ton des libellés, règles de sélection. À charger avant de toucher un composant sous components/atelier/ ou app/globals.css.
 ---
 
 # Obskura — direction artistique

@@ -2,12 +2,10 @@
 
 # Obskura
 
-<sub><code>img-creator</code></sub>
-
 **A local-first workshop for image generation.**
 One prompt, several models, side by side — no account, no database, no server that keeps your keys.
 
-[![CI](https://github.com/samuelboulery/img-creator/actions/workflows/ci.yml/badge.svg)](https://github.com/samuelboulery/img-creator/actions/workflows/ci.yml)
+[![CI](https://github.com/samuelboulery/obskura/actions/workflows/ci.yml/badge.svg)](https://github.com/samuelboulery/obskura/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-f5a623.svg)](LICENSE)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
@@ -16,7 +14,7 @@ One prompt, several models, side by side — no account, no database, no server 
 
 <img src="docs/screenshots/01-fiche-image-screenmat.webp" alt="Obskura: session strip, the selected image on the stage, the prompt composer and the image sheet" width="900">
 
-<sub>Framed with <a href="https://github.com/samuelboulery/screenmat">screenmat</a>. Demo session: the visuals are drawn on a canvas by the screenshot script, not model output. Regenerate them with <code>SCREENMAT=../screenmat node scripts/screenshots.mjs</code>.</sub>
+<sub>Framed with <a href="https://github.com/samuelboulery/screenmat">screenmat</a>. Demo session: the visuals are drawn on a canvas by the screenshot script, not model output. Regenerate them with <code>SCREENMAT=../screenmat node scripts/screenshots.mjs</code> while <code>pnpm dev</code> runs.</sub>
 
 </div>
 
@@ -68,8 +66,8 @@ Obskura does the opposite. **The inspector shows the real request body**, built 
 ## Quick start
 
 ```bash
-git clone https://github.com/samuelboulery/img-creator.git
-cd img-creator
+git clone https://github.com/samuelboulery/obskura.git
+cd obskura
 pnpm install
 pnpm dev
 ```

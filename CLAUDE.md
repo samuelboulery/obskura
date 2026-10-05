@@ -1,4 +1,4 @@
-# img-creator — Obskura
+# Obskura
 
 Interface multi-API pour la génération d'images, marque **Obskura** (suite avec screenmat). Le prompt (positif, négatif, références de sujet et de style) part vers `gemini-3.1-flash-image-preview` (« Nano Banana 2 »), `gpt-image-2`, `gpt-image-2.5-sunburst` ou `gpt-image-2.5-flare`. Un seul espace de travail : la **sélection** décide de l'inspecteur et de la scène (rien → réglages ; une image → sa fiche ; deux → comparaison ; davantage → export). Un second modèle peut tourner « en parallèle ».
 

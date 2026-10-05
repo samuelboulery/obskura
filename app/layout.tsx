@@ -26,7 +26,7 @@ const description =
   "Un prompt entre, une image sort. Génération d'images multi-modèles (Nano Banana 2, GPT Image), avec votre propre clé. Sans compte ni base de données : tout reste dans le navigateur."
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://img-generator-app.netlify.app'),
+  metadataBase: new URL('https://obskura.netlify.app'),
   title: { default: title, template: '%s — Obskura' },
   description,
   applicationName: 'Obskura',

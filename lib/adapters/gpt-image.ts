@@ -89,7 +89,8 @@ export function makeGptImageAdapter(modelId: GptImageModelId): GenerateImageAdap
   return {
     async generate(
       request: GenerationRequest,
-      apiKeyOverride?: string
+      apiKeyOverride?: string,
+      signal?: AbortSignal
     ): Promise<GenerationResult[]> {
       const apiKey = apiKeyOverride ?? serverKey('OPENAI_API_KEY')
       if (!apiKey) {
@@ -128,9 +129,10 @@ export function makeGptImageAdapter(modelId: GptImageModelId): GenerateImageAdap
               image: await Promise.all(
                 references.map((image, index) => referenceToFile(image, `ref-${index}.png`))
               ),
-            } as unknown as OpenAI.Images.ImageEditParamsNonStreaming)
+            } as unknown as OpenAI.Images.ImageEditParamsNonStreaming, { signal })
           : await openai.images.generate(
-              common as unknown as OpenAI.Images.ImageGenerateParamsNonStreaming
+              common as unknown as OpenAI.Images.ImageGenerateParamsNonStreaming,
+              { signal }
             )
 
       const images: GenerationResult[] = (response.data ?? [])

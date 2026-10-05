@@ -144,7 +144,11 @@ export interface GalleryItem {
 
 export interface GenerateImageAdapter {
   /** Renvoie autant d'images que `params.batch` en demande. */
-  generate(request: GenerationRequest, apiKeyOverride?: string): Promise<GenerationResult[]>
+  generate(
+    request: GenerationRequest,
+    apiKeyOverride?: string,
+    signal?: AbortSignal
+  ): Promise<GenerationResult[]>
 }
 
 export interface GenerateResponse {

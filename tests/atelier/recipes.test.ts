@@ -63,3 +63,15 @@ describe('fusion', () => {
     expect(merged.map((entry) => entry.id)).toEqual(['r1', 'r2'])
   })
 })
+
+describe('import — références', () => {
+  test.each(['image/svg+xml', 'text/html', 'image/png;x=1'])('un mime %s refuse le fichier', (mimeType) => {
+    const piege = recipe({ styleImages: [{ base64: 'AAAA', mimeType }] })
+    expect(parseRecipesFile(JSON.stringify([piege])).ok).toBe(false)
+  })
+
+  test('une référence jpeg passe', () => {
+    const ok = recipe({ styleImages: [{ base64: 'AAAA', mimeType: 'image/jpeg' }] })
+    expect(parseRecipesFile(JSON.stringify([ok])).ok).toBe(true)
+  })
+})

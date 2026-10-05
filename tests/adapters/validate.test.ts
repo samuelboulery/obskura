@@ -100,6 +100,18 @@ describe('validation en frontière', () => {
     ).toThrow(BadRequestError)
   })
 
+  test.each(['image/svg+xml', 'image/x-anything'])('le mime %s est rejeté', (mimeType) => {
+    expect(() =>
+      parseGenerationRequest(body({ subjectImages: [{ base64: 'AAAA', mimeType }] }))
+    ).toThrow(BadRequestError)
+  })
+
+  test.each(['image/png', 'image/jpeg', 'image/webp', 'image/gif'])('le mime %s passe', (mimeType) => {
+    expect(() =>
+      parseGenerationRequest(body({ subjectImages: [{ base64: 'AAAA', mimeType }] }))
+    ).not.toThrow()
+  })
+
   test('des références trop volumineuses lèvent un 413', () => {
     expect(() =>
       parseGenerationRequest(

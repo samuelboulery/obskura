@@ -72,3 +72,23 @@ describe('taille du corps — refusée avant la lecture', () => {
     expect(res.status).toBe(413)
   })
 })
+
+describe('/api/generate — délai amont', () => {
+  test('au-delà du délai, l’appel amont est annulé', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    let signal: AbortSignal | undefined
+    generate.mockImplementation((_req, _key, s?: AbortSignal) => {
+      signal = s
+      return new Promise(() => {})
+    })
+
+    const pending = generatePOST(post('/api/generate', JSON.stringify(VALIDE), { 'x-api-key': 'k' }))
+    await vi.advanceTimersByTimeAsync(120_000)
+    const res = await pending
+    vi.useRealTimers()
+
+    expect(res.status).toBe(500)
+    expect(signal?.aborted).toBe(true)
+  })
+})

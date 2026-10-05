@@ -94,6 +94,8 @@ GEMINI_API_KEY=...   # repli optionnel pour nano-banana-2
 OPENAI_API_KEY=...   # repli optionnel pour gpt-image-2
 ```
 
+En développement (`pnpm dev`), le repli fonctionne tel quel. En production, il reste **fermé** sauf avec `ALLOW_SERVER_KEY=1` : les routes API n'ont pas d'authentification, n'importe qui pourrait dépenser la clé avec `curl`. Ne l'ouvrir qu'avec un plafond de dépense posé chez le fournisseur.
+
 L'enrichissement de prompt n'a délibérément **aucun** repli serveur : il consomme toujours la clé texte de l'utilisateur, ou reste inactif.
 
 ## Modèles
@@ -150,7 +152,7 @@ Rien n'est stocké hors de votre navigateur. `localStorage` contient :
 | `imgc.params` | réglages courants |
 | `imgc.prefs` | thème, langue, tarifs, clé et consigne d'enrichissement |
 
-Les routes API appliquent une limite de débit naïve en mémoire (10 requêtes/minute par IP). Elle se réinitialise au redémarrage et ne survit pas à plusieurs instances — suffisant pour un déploiement auto-hébergé, pas pour un service public.
+Les routes API appliquent une limite de débit naïve en mémoire (10 requêtes/minute par IP). Elle se réinitialise au redémarrage et ne survit pas à plusieurs instances — suffisant pour un déploiement auto-hébergé, pas pour un service public. Derrière une plateforme qui pose elle-même l'IP du client, nommer cet en-tête dans `TRUSTED_IP_HEADER` — sur Netlify, `x-nf-client-connection-ip`. Sans lui ni `TRUSTED_PROXY_COUNT`, tous les visiteurs partagent un seul quota.
 
 ## Scripts
 

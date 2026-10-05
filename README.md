@@ -94,6 +94,8 @@ GEMINI_API_KEY=...   # optional fallback for nano-banana-2
 OPENAI_API_KEY=...   # optional fallback for gpt-image-2
 ```
 
+In development (`pnpm dev`) the fallback works as is. In production it stays **off** unless `ALLOW_SERVER_KEY=1`: the API routes have no authentication, so anyone with `curl` could spend the key. Only turn it on with a spending cap set at the provider.
+
 Prompt enrichment deliberately has **no** server fallback: it always spends the user's own text key, or stays inactive.
 
 ## Models
@@ -152,7 +154,7 @@ Nothing is stored outside your browser. `localStorage` holds:
 
 The API routes apply a naive in-memory rate limit (10 requests/minute). It resets on restart and does not survive multiple instances — enough for a single self-hosted deployment, not for a public service.
 
-`X-Forwarded-For` is only trusted when `TRUSTED_PROXY_COUNT` says how many proxies sit in front of the app; otherwise the header is ignored, since a client can forge it to get a fresh quota on every request.
+`X-Forwarded-For` is only trusted when `TRUSTED_PROXY_COUNT` says how many proxies sit in front of the app; otherwise the header is ignored, since a client can forge it to get a fresh quota on every request. Behind a platform that sets the client IP itself, name that header in `TRUSTED_IP_HEADER` — on Netlify, `x-nf-client-connection-ip`. Without either, every visitor shares one quota.
 
 Both POST routes reject cross-origin requests (`Sec-Fetch-Site`, falling back to `Origin`) and anything that is not `application/json` — without that pair, a third-party page could spend a shared instance's fallback key through a simple no-preflight request. Every field of the request body is validated against an explicit allow-list before it reaches an adapter, and `extraParams` cannot overwrite structural fields such as `model`, `n` or `moderation`.
 

@@ -1,6 +1,20 @@
 import type { ExtraParam, GenerationParams } from '@/lib/types'
 
 /**
+ * Clé de repli du serveur, quand l'utilisateur n'a pas fourni la sienne.
+ *
+ * Les routes n'ont pas d'authentification : en production, un simple `curl`
+ * dépenserait cette clé. Le repli y est donc fermé par défaut, et ne s'ouvre
+ * qu'avec `ALLOW_SERVER_KEY=1` — à réserver à une instance de démo dont le
+ * budget est plafonné chez le fournisseur.
+ */
+export function serverKey(name: 'GEMINI_API_KEY' | 'OPENAI_API_KEY'): string | undefined {
+  const allowed =
+    process.env.NODE_ENV !== 'production' || process.env.ALLOW_SERVER_KEY === '1'
+  return allowed ? process.env[name] : undefined
+}
+
+/**
  * Fusionne le négatif saisi et celui du preset, puis déduplique : aucun des
  * deux modèles n'a de champ négatif, tout finit dans le texte du prompt.
  */

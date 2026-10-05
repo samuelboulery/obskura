@@ -27,6 +27,13 @@ const MAX_ENTRIES = 10_000
 const TRUSTED_PROXIES = Number(process.env.TRUSTED_PROXY_COUNT ?? 0)
 
 export function clientKey(req: Request): string {
+  // En-tête posé par la plateforme et écrasé à chaque requête — sur Netlify,
+  // `x-nf-client-connection-ip`. À ne déclarer que si la plateforme le garantit :
+  // ailleurs, le client l'écrit lui-même.
+  const ipHeader = process.env.TRUSTED_IP_HEADER
+  const ip = ipHeader ? req.headers.get(ipHeader)?.trim() : undefined
+  if (ip) return ip
+
   if (!Number.isInteger(TRUSTED_PROXIES) || TRUSTED_PROXIES <= 0) return 'local'
 
   const chain = (req.headers.get('x-forwarded-for') ?? '')

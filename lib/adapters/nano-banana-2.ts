@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai'
 import { pruneUnsupported } from './capabilities'
-import { composePrompt, mergeExtraParams, mergeNegatives, resolveSeed } from './shared'
+import { composePrompt, mergeExtraParams, mergeNegatives, resolveSeed, serverKey } from './shared'
 import type {
   GenerateImageAdapter,
   GenerationRequest,
@@ -77,7 +77,7 @@ export const nanoBanana2Adapter: GenerateImageAdapter = {
     request: GenerationRequest,
     apiKeyOverride?: string
   ): Promise<GenerationResult[]> {
-    const apiKey = apiKeyOverride ?? process.env.GEMINI_API_KEY
+    const apiKey = apiKeyOverride ?? serverKey('GEMINI_API_KEY')
     if (!apiKey) {
       throw new Error(
         "Aucune clé API configurée — renseignez-la dans l'interface ou dans .env.local"

@@ -81,6 +81,8 @@ pnpm test:e2e         # Playwright (parcours critique)
 |---|---|---|
 | `GEMINI_API_KEY` | optionnel | Repli serveur pour nano-banana-2 si l'utilisateur n'a pas saisi de clé |
 | `OPENAI_API_KEY` | optionnel | Repli serveur pour gpt-image-2 |
+| `ALLOW_SERVER_KEY` | optionnel | `1` ouvre le repli serveur en production (fermé par défaut : routes sans auth, la clé serait dépensable par `curl`). En dev, le repli marche sans. |
+| `TRUSTED_IP_HEADER` | optionnel | En-tête d'IP client posé par la plateforme (Netlify : `x-nf-client-connection-ip`). Sans lui ni `TRUSTED_PROXY_COUNT`, tous les visiteurs partagent un seul quota. |
 | `TRUSTED_PROXY_COUNT` | optionnel | Nombre de proxys de confiance devant l'app (défaut `0`). Tant qu'il vaut `0`, `X-Forwarded-For` est ignoré : un client peut le forger et se donner un quota neuf à chaque requête. |
 
 ## Notes API

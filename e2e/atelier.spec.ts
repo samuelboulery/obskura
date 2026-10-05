@@ -31,7 +31,7 @@ const strip = (page: Page) => page.getByRole('navigation', { name: 'Session' })
 
 test('premier contact : la scène invite à décrire une image', async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear())
-  await page.goto('/')
+  await page.goto('/app')
 
   await expect(page).toHaveTitle(/Obskura/)
   await expect(page.getByRole('heading', { name: 'Décrire une image.' })).toBeVisible()
@@ -41,7 +41,7 @@ test('premier contact : la scène invite à décrire une image', async ({ page }
 test('sans clé, Générer demande la clé sur la scène et n’envoie rien', async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear())
   const calls = await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
 
   await generate(page, 'un phare dans la tempête')
   const card = page.getByRole('form', { name: 'Coller une clé Google' })
@@ -58,7 +58,7 @@ test('sans clé, Générer demande la clé sur la scène et n’envoie rien', as
 test('une génération remplit la bande et la scène, et survit au rechargement', async ({ page }) => {
   await withKey(page)
   await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
 
   await generate(page, 'un vase en céramique')
   await expect(page.getByAltText('un vase en céramique')).toBeVisible()
@@ -72,7 +72,7 @@ test('une génération remplit la bande et la scène, et survit au rechargement'
 test('cliquer une vignette ouvre sa fiche ; Supprimer est annulable', async ({ page }) => {
   await withKey(page)
   await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
   await generate(page, 'une chaise en rotin')
 
   await strip(page).getByRole('button', { name: /une chaise en rotin/ }).click()
@@ -96,7 +96,7 @@ test('un échec de clé propose la clé, pas un « Relancer » stérile', async 
       body: JSON.stringify({ success: false, error: 'Clé API invalide ou manquante' }),
     })
   )
-  await page.goto('/')
+  await page.goto('/app')
   await generate(page, 'un phare dans la tempête')
 
   const stage = page.getByRole('region', { name: 'Scène' })
@@ -107,7 +107,7 @@ test('un échec de clé propose la clé, pas un « Relancer » stérile', async 
 })
 
 test('⌘K : choisir un modèle au clavier ; Échap ferme sans vider la sélection', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/app')
 
   await page.keyboard.press('ControlOrMeta+k')
   const palette = page.getByRole('dialog', { name: 'Actions' })
@@ -123,7 +123,7 @@ test('⌘K : choisir un modèle au clavier ; Échap ferme sans vider la sélecti
 })
 
 test('? ouvre les raccourcis', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/app')
   await page.getByRole('heading', { name: 'Décrire une image.' }).click()
   await page.keyboard.press('Shift+?')
   await expect(page.getByRole('dialog', { name: 'Raccourcis' })).toBeVisible()
@@ -132,7 +132,7 @@ test('? ouvre les raccourcis', async ({ page }) => {
 test('Clés : une clé saisie dans le dialogue permet de générer', async ({ page }) => {
   await page.addInitScript(() => window.localStorage.clear())
   const calls = await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
 
   await page.getByRole('button', { name: 'Clés' }).click()
   const dialog = page.getByRole('dialog', { name: 'Clés et tarifs' })
@@ -145,7 +145,7 @@ test('Clés : une clé saisie dans le dialogue permet de générer', async ({ pa
 })
 
 test('Presets : enregistrer les réglages, puis les réappliquer', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/app')
   await page.getByRole('radio', { name: '16:9' }).check({ force: true })
 
   await page.getByRole('button', { name: 'Presets' }).click()
@@ -164,7 +164,7 @@ test('Presets : enregistrer les réglages, puis les réappliquer', async ({ page
 test('Nouvelle session : confirmée, puis la bande est vide', async ({ page }) => {
   await withKey(page)
   await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
   await generate(page, 'un bol de riz')
   await expect(page.getByAltText('un bol de riz')).toBeVisible()
 
@@ -177,7 +177,7 @@ test('Nouvelle session : confirmée, puis la bande est vide', async ({ page }) =
 test('Historique : retrouver une image par son prompt', async ({ page }) => {
   await withKey(page)
   await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
   await generate(page, 'une lanterne en papier')
   await expect(page.getByAltText('une lanterne en papier')).toBeVisible()
 
@@ -192,7 +192,7 @@ test('Historique : retrouver une image par son prompt', async ({ page }) => {
 test('⇧-clic sur deux vignettes : comparaison, puis garder une image (annulable)', async ({ page }) => {
   await withKey(page)
   await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
   await generate(page, 'un vase bleu')
   await expect(page.getByAltText('un vase bleu')).toBeVisible()
   await generate(page, 'un vase rouge')
@@ -214,7 +214,7 @@ test('⇧-clic sur deux vignettes : comparaison, puis garder une image (annulabl
 test('trois images sélectionnées : la fiche propose l’export', async ({ page }) => {
   await withKey(page)
   await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
   for (const prompt of ['une pomme', 'une poire', 'une prune']) {
     await generate(page, prompt)
     await expect(page.getByAltText(prompt)).toBeVisible()
@@ -232,7 +232,7 @@ test('trois images sélectionnées : la fiche propose l’export', async ({ page
 
 test('sous 1100 px, les réglages passent en feuille ouverte à la demande', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 768 })
-  await page.goto('/')
+  await page.goto('/app')
 
   const inspector = page.getByRole('complementary', { name: 'Inspecteur' })
   await expect(inspector).toBeHidden()
@@ -247,7 +247,7 @@ for (const width of [360, 1024]) {
     await withKey(page)
     await mockGenerate(page)
     await page.setViewportSize({ width, height: 812 })
-    await page.goto('/')
+    await page.goto('/app')
     await generate(page, 'une dune au crépuscule')
     await expect(page.getByAltText('une dune au crépuscule')).toBeVisible()
 
@@ -261,7 +261,7 @@ for (const width of [360, 1024]) {
 }
 
 test('le thème et la langue se choisissent et survivent au rechargement', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/app')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
 
   await page.getByRole('button', { name: 'Passer au thème clair' }).click()
@@ -277,7 +277,7 @@ test('le thème et la langue se choisissent et survivent au rechargement', async
 test('Échap dans le prompt garde la fiche ouverte', async ({ page }) => {
   await withKey(page)
   await mockGenerate(page)
-  await page.goto('/')
+  await page.goto('/app')
   await generate(page, 'un cerf-volant')
   await strip(page).getByRole('button', { name: /un cerf-volant/ }).click()
 

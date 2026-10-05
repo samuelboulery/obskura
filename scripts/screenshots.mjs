@@ -29,7 +29,7 @@ const PALETTE = { base: '#15110f', accents: ['#9a4632', '#3e4c6e', '#c9824e'] }
 const browser = await chromium.launch()
 
 async function seed(page, { lang = 'fr', theme = 'dark' } = {}) {
-  await page.goto(BASE)
+  await page.goto(`${BASE}/app`)
   await page.evaluate(({ lang, theme }) => {
     const rand = (() => {
       let s = 7
@@ -345,7 +345,7 @@ async function newPage(opts = {}) {
 // 8. Premier contact, clé demandée sur la scène
 {
   const page = await newPage()
-  await page.goto(BASE)
+  await page.goto(`${BASE}/app`)
   await page.evaluate(() => localStorage.clear())
   await page.reload()
   await page.getByLabel('Prompt', { exact: true }).fill('A paper lantern floating over a still lake')

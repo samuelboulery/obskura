@@ -10,9 +10,11 @@ Interface multi-API pour la génération d'images, marque **Obskura** (suite ave
 app/
   layout.tsx                  ← Space Grotesk · JetBrains Mono · Unbounded (next/font), script anti-flash thème/langue
   globals.css                 ← jetons papier/encre (@theme inline, sombre par défaut, [data-theme='light'])
-  page.tsx                    ← shell : TopBar · Strip · Stage + Composer · inspecteur · surcouches
+  page.tsx                    ← landing (`/`), rendu serveur, sombre et en français
+  app/page.tsx                ← l'app (`/app`) : TopBar · Strip · Stage + Composer · inspecteur · surcouches
   api/generate/route.ts       ← proxy image, renvoie un tableau d'images
   api/enrich/route.ts         ← enrichissement de prompt, clé de l'utilisateur
+components/landing/           ← Landing (serveur) · LandingStory · SendScene · CompareSection · ModelsSection · JsonView · landing.css
 components/atelier/
   TopBar · Strip · Composer · Mark · ui (Button, IconButton, Kbd, Segmented, Toggle, Section, Field, KeyValue, Shot)
   commands.ts                 ← actions de la palette ⌘K
@@ -33,7 +35,8 @@ lib/
     reducer.ts                ← état d'interface : modèle(s), sélection, surcouche, carte de clé
     session-view.ts undo.ts error-kind.ts storage.ts params.ts recipes.ts export.ts diff.ts cost.ts
     palette.ts image-file.ts thumbnail.ts session-store.ts use-now.ts
-  i18n/                       ← fr.ts (référence, `Dict`) · en.ts · useT()
+  i18n/                       ← fr.ts (référence, `Dict`) · en.ts · useT() · landing-fr.ts (textes de la landing)
+  landing/                    ← corps réels via buildPayload (serveur), temps de la transition, moteur WebGL2 de glyphes
 ```
 
 **Tech stack :** Next.js 16 (App Router) · React 19 · TypeScript strict · Tailwind CSS 4 (config CSS-first) · Phosphor Icons (variantes `XxxIcon`, import `/dist/ssr`) · Vitest + Playwright.

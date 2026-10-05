@@ -72,7 +72,7 @@ pnpm install
 pnpm dev
 ```
 
-Ouvrir <http://localhost:3000>, écrire un prompt, <kbd>⌘↵</kbd> : la scène demande la clé nécessaire la première fois.
+Ouvrir <http://localhost:3000/app>, écrire un prompt, <kbd>⌘↵</kbd> : la scène demande la clé nécessaire la première fois.
 
 > **pnpm exclusivement.** `npm`, `yarn` et `bun` ne sont pas supportés — le lockfile et le champ `packageManager` épinglent pnpm.
 

@@ -213,7 +213,7 @@ pre.json [data-note]:hover, pre.json [data-note]:focus-visible { background: var
 .node ul { display: grid; gap: 4px; }
 .node li { font: 400 11px/1.5 var(--font-mono); color: var(--ink-soft); }
 .wire { position: relative; align-self: center; height: 1px; background: var(--hairline-strong); }
-.wire span { position: absolute; left: 0; top: -9px; font: 400 11px/1 var(--font-mono); color: var(--ink); white-space: nowrap; animation: landing-travel 3.2s var(--ease-out) infinite; }
+.wire span { position: absolute; left: 50%; top: -9px; transform: translateX(-50%); padding: 0 6px; background: var(--bg-stage); font: 400 11px/1 var(--font-mono); color: var(--ink); white-space: nowrap; animation: landing-travel 3.2s var(--ease-out) infinite; }
 .wire .lbl { position: absolute; left: 0; right: 0; top: 12px; text-align: center; }
 
 /* Pied */
@@ -265,7 +265,7 @@ pre.json [data-note]:hover, pre.json [data-note]:focus-visible { background: var
   .after-copy .fiche { display: none; }
   .flow { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
   .wire { height: 56px; width: 1px; justify-self: center; }
-  .wire span { left: 8px; top: 0; animation: landing-travel-v 3.2s var(--ease-out) infinite; }
+  .wire span { left: 8px; top: 50%; transform: translateY(-50%); padding: 4px 0; background: var(--bg-stage); animation: landing-travel-v 3.2s var(--ease-out) infinite; }
   .wire .lbl { left: 12px; right: auto; top: 50%; text-align: left; transform: translateY(-50%); white-space: nowrap; }
     }
 

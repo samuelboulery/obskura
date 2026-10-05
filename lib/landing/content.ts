@@ -17,23 +17,23 @@ export interface LandingPrompt {
  */
 export const LANDING_PROMPTS: readonly LandingPrompt[] = [
   {
-    slug: 'bulle',
-    prompt: "Une bulle de savon, juste avant d'éclater, photographiée de flash sur fond noir dans un style photo macro au flash",
-    seed: 7234910,
-  },
-  {
     slug: 'comete',
-    prompt: "Une comète traverse une nuit d'encre au-dessus d'un phare éteint, estampe sur bois vermillon et or. Style : estampe japonaise sur bois",
+    prompt: "Une comète traverse une nuit d'encre au-dessus d'un phare éteint, estampe sur bois vermillon et or",
     seed: 1071850,
   },
   {
+    slug: 'bulle',
+    prompt: "Une bulle de savon, juste avant d'éclater, photographiée de flash sur fond noir",
+    seed: 7234910,
+  },
+  {
     slug: 'bougie',
-    prompt: "Une bougie veille une grenade ouverte sur une nappe noire, peinte à l'huile en clair-obscur. Style : nature morte à l'huile",
+    prompt: "Une bougie veille une grenade ouverte sur une nappe noire, peinte à l'huile en clair-obscur",
     seed: 5032010,
   },
   {
     slug: 'serre',
-    prompt: 'Une serre pleine de citronniers brille seule dans la neige, au pastel sur papier noir. Style : pastel sur papier noir',
+    prompt: 'Une serre pleine de citronniers brille seule dans la neige, au pastel sur papier noir',
     seed: 5081630,
   },
 ]

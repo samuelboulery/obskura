@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useRef, useState } from 'react'
-import { MODELS } from '@/lib/adapters/capabilities'
+import { MODELS, supports } from '@/lib/adapters/capabilities'
 import { landingFr as t } from '@/lib/i18n/landing-fr'
 import {
   FIELD_NOTES,
@@ -9,6 +9,7 @@ import {
   IMAGE_W,
   IMAGES_ARE_REAL,
   imageSrc,
+  COMPARE_MODEL,
   SCENE_MODEL,
 } from '@/lib/landing/content'
 import { formatInt } from '@/lib/landing/format'
@@ -73,7 +74,12 @@ export default function SendScene({ cases, req, onSelect }: SendSceneProps) {
     raf = requestAnimationFrame(step)
   }
 
-  const meta = `16:9 · 2K · ${t.after.seed} ${current.seed} · ${fr(payload.bytes)} ${t.hero.bytes}`
+  const name = MODELS[SCENE_MODEL].name
+  // GPT Image ignore la seed : on ne l'affiche que si le modèle de la scène la reçoit.
+  const seeded = supports(SCENE_MODEL, 'seed')
+  const meta = [current.format, seeded && `${t.after.seed} ${current.seed}`, `${fr(payload.bytes)} ${t.hero.bytes}`]
+    .filter(Boolean)
+    .join(' · ')
 
   return (
     <section className="track" id="avant" aria-labelledby="hero-title" ref={trackRef}>
@@ -105,7 +111,7 @@ export default function SendScene({ cases, req, onSelect }: SendSceneProps) {
                     {/* eslint-disable-next-line @next/next/no-img-element -- vignette décorative, taille fixe */}
                     <img src={imageSrc(c.slug, SCENE_MODEL)} width={128} height={72} alt="" />
                     <span className="t">{c.prompt}</span>
-                    <span className="k">{c.seed}</span>
+                    <span className="k">{seeded ? c.seed : String(i + 1).padStart(2, '0')}</span>
                   </label>
                 ))}
               </fieldset>
@@ -125,7 +131,7 @@ export default function SendScene({ cases, req, onSelect }: SendSceneProps) {
                   notes={FIELD_NOTES}
                   onNote={setNote}
                   onSettled={settled}
-                  ariaLabel={t.hero.bodyLabel}
+                  ariaLabel={`${t.hero.bodyLabel} ${name}`}
                 />
               </div>
               <p className="insp-note" aria-live="polite">
@@ -167,17 +173,21 @@ export default function SendScene({ cases, req, onSelect }: SendSceneProps) {
         <div className="after">
           <div className="grid after-grid">
             <div className="after-copy">
-              <p className="lbl">{MODELS[SCENE_MODEL].name} · 200</p>
+              <p className="lbl">{name} · 200</p>
               <h2>{t.after.title}</h2>
               <dl className="fiche">
                 <dt>{t.after.fiche.prompt}</dt>
                 <dd className="prompt">{current.prompt}</dd>
                 <dt>{t.after.fiche.model}</dt>
-                <dd>{MODELS[SCENE_MODEL].name}</dd>
+                <dd>{name}</dd>
                 <dt>{t.after.fiche.format}</dt>
-                <dd>16:9 · 2K</dd>
-                <dt>{t.after.fiche.seed}</dt>
-                <dd>{current.seed}</dd>
+                <dd>{current.format}</dd>
+                {seeded && (
+                  <>
+                    <dt>{t.after.fiche.seed}</dt>
+                    <dd>{current.seed}</dd>
+                  </>
+                )}
                 <dt>{t.after.fiche.sent}</dt>
                 <dd>
                   {fr(payload.bytes)} {t.hero.bytes}
@@ -185,7 +195,7 @@ export default function SendScene({ cases, req, onSelect }: SendSceneProps) {
               </dl>
               <div className="after-actions">
                 <a className="txt link" href="#comparaison">
-                  {t.after.compare}
+                  {t.after.compare} {MODELS[COMPARE_MODEL].name}
                 </a>
                 <button className="link" type="button" onClick={replay}>
                   {t.after.replay}
@@ -197,10 +207,10 @@ export default function SendScene({ cases, req, onSelect }: SendSceneProps) {
               <img src={src} alt={current.prompt} width={IMAGE_W} height={IMAGE_H} />
               <figcaption className="meta">
                 <span>
-                  {current.slug} · {t.after.seed} {current.seed}
+                  {seeded ? `${current.slug} · ${t.after.seed} ${current.seed}` : current.slug}
                 </span>
                 <span>
-                  {IMAGES_ARE_REAL ? `${t.images.realOf} ${MODELS[SCENE_MODEL].name}` : t.images.mock}
+                  {IMAGES_ARE_REAL ? `${t.images.realOf} ${name}` : t.images.mock}
                 </span>
               </figcaption>
             </figure>

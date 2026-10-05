@@ -12,7 +12,6 @@ import { DEFAULT_PARAMS } from '@/lib/atelier/params'
 import type { AdapterId, GenerationParams, GenerationRequest } from '@/lib/types'
 import {
   COMPARE_MODEL,
-  LANDING_NEGATIVE,
   LANDING_PROMPTS,
   SCENE_MODEL,
   type LandingPrompt,
@@ -22,7 +21,7 @@ import { formatJson } from './format'
 /**
  * Côté serveur seulement : `buildPayload` tire les adapters, donc les SDK.
  * La landing affiche ce que l'app enverrait pour la même saisie, graine
- * verrouillée, en 16:9 et 2K.
+ * verrouillée, en 16:9 et 2K, sans négatif.
  */
 export function landingRequest(prompt: LandingPrompt, adapterId: AdapterId): GenerationRequest {
   const params: GenerationParams = {
@@ -33,7 +32,7 @@ export function landingRequest(prompt: LandingPrompt, adapterId: AdapterId): Gen
     seedLock: true,
     language: 'fr',
   }
-  return { adapterId, prompt: prompt.prompt, negative: LANDING_NEGATIVE, params: fitParams(params, adapterId) }
+  return { adapterId, prompt: prompt.prompt, params: fitParams(params, adapterId) }
 }
 
 export interface LandingPayload {
@@ -58,6 +57,8 @@ export interface LandingDiffRow {
 }
 
 export interface LandingCase extends LandingPrompt {
+  /** Format et résolution tels que le modèle de la scène les reçoit. */
+  format: string
   payloads: Record<AdapterId, LandingPayload>
   settings: LandingSetting[]
   diff: LandingDiffRow[]
@@ -120,8 +121,10 @@ export function landingCases(): LandingCase[] {
       GenerationRequest
     >
     const params = requests[SCENE_MODEL].params
+    const scene = requests[SCENE_MODEL].params
     return {
       ...prompt,
+      format: `${sentValue(SCENE_MODEL, 'aspectRatio', scene)} · ${sentValue(SCENE_MODEL, 'resolution', scene)}`,
       payloads: Object.fromEntries(ADAPTERS.map((id) => [id, payloadOf(requests[id])])) as Record<
         AdapterId,
         LandingPayload

@@ -5,6 +5,7 @@ import { ADAPTERS, MODELS } from '@/lib/adapters/capabilities'
 import { DEFAULT_PRICING, formatEur } from '@/lib/atelier/cost'
 import { landingFr as t } from '@/lib/i18n/landing-fr'
 import { formatInt } from '@/lib/landing/format'
+import { SCENE_MODEL } from '@/lib/landing/content'
 import type { LandingCase } from '@/lib/landing/requests'
 import type { AdapterId } from '@/lib/types'
 import JsonView from './JsonView'
@@ -12,7 +13,7 @@ import { useCount } from './use-count'
 
 /** Changer de modèle barre les réglages qu'il ignore et réécrit le corps. */
 export default function ModelsSection({ current }: { current: LandingCase }) {
-  const [model, setModel] = useState<AdapterId>(ADAPTERS[0])
+  const [model, setModel] = useState<AdapterId>(SCENE_MODEL)
   const payload = current.payloads[model]
   const ignored = current.settings.filter((s) => s.ignoredBy.includes(model))
   const bytesRef = useCount<HTMLElement>(payload.bytes, 600)

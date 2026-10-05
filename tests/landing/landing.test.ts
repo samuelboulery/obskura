@@ -30,6 +30,13 @@ describe('corps affichés par la landing', () => {
     expect(gpt.size).toBe('1536x864')
   })
 
+  test('le prompt part tel que saisi pour les images montrées, sans négatif', () => {
+    const nano = JSON.parse(cases[1].payloads['nano-banana-2'].text)
+    const gpt = JSON.parse(cases[1].payloads['gpt-image-2.5-sunburst'].text)
+    expect(nano.contents[0].parts[0].text).toBe(LANDING_PROMPTS[1].prompt)
+    expect(gpt.prompt).toBe(LANDING_PROMPTS[1].prompt)
+  })
+
   test('les réglages barrés sont ceux que le modèle ignore', () => {
     const gpt = cases[0].settings.filter((s) => s.ignoredBy.includes('gpt-image-2'))
     expect(gpt.map((s) => s.param)).toEqual(
@@ -38,10 +45,14 @@ describe('corps affichés par la landing', () => {
     expect(gpt.map((s) => s.label)).toContain('seed')
   })
 
-  test("l'écart Nano / Sunburst marque la graine ignorée côté OpenAI", () => {
+  test("l'écart Sunburst / Nano marque la seed ignorée côté OpenAI", () => {
     const seed = cases[0].diff.find((row) => row.label === 'seed')
-    expect(seed).toEqual({ label: 'seed', a: String(LANDING_PROMPTS[0].seed), b: null })
+    expect(seed).toEqual({ label: 'seed', a: null, b: String(LANDING_PROMPTS[0].seed) })
   })
+})
+
+test('la fiche de la scène décrit ce que reçoit GPT Image 2.5 Sunburst', () => {
+  expect(landingCases()[0].format).toBe('1536x864 · medium')
 })
 
 describe('formatJson', () => {

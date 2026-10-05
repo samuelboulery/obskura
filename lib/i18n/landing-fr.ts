@@ -23,7 +23,7 @@ export const landingFr = {
     leadEnd: '. Deux modèles en parallèle, chaque écart listé.',
     choose: 'Choisir un prompt',
     bytes: 'octets',
-    bodyLabel: 'Corps de la requête envoyée à Nano Banana 2',
+    bodyLabel: 'Corps de la requête envoyée à',
     field: 'Champ',
     fieldHint: "Survoler un champ pour lire ce qu'il fait.",
     cue: 'Défiler pour générer',
@@ -43,7 +43,7 @@ export const landingFr = {
   after: {
     title: "Une image. Et si un autre modèle l'avait faite ?",
     fiche: { prompt: 'Prompt', model: 'Modèle', format: 'Format', seed: 'Seed', sent: 'Envoyé' },
-    compare: 'Comparer avec GPT Image',
+    compare: 'Comparer avec',
     replay: 'Rejouer',
     seed: 'seed',
   },

@@ -6,11 +6,12 @@ test.describe('landing', () => {
     await expect(page.locator('h1')).toHaveCount(1)
     await expect(page.locator('h1')).toHaveText('Un prompt. Plusieurs regards.')
 
-    const body = page.getByLabel('Corps de la requête envoyée à Nano Banana 2')
-    await expect(body).toContainText('"seed": 41207')
+    const body = page.getByLabel('Corps de la requête envoyée à GPT Image 2.5 Sunburst')
+    await expect(body).toContainText('"model": "gpt-image-2.5-sunburst"')
+    await expect(body).toContainText('Une bulle de savon')
 
-    await page.getByText('une serre de nuit', { exact: false }).first().click()
-    await expect(body).toContainText('"seed": 80313')
+    await page.getByText('Une comète traverse', { exact: false }).first().click()
+    await expect(body).toContainText('Une comète traverse')
   })
 
   test('changer de modèle retire les réglages ignorés', async ({ page }) => {

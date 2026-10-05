@@ -10,7 +10,8 @@ const spaceGrotesk = Space_Grotesk({
 
 const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
-  weight: ['400', '500'],
+  // 800 : la rampe de luminance de la landing.
+  weight: ['400', '500', '800'],
   subsets: ['latin'],
 })
 
@@ -50,9 +51,10 @@ export const viewport: Viewport = {
 
 /**
  * Pose le thème et la langue avant la première peinture : sans lui, un
- * utilisateur en clair verrait un éclair sombre à chaque chargement.
+ * utilisateur en clair verrait un éclair sombre à chaque chargement. La landing
+ * reste sombre et en français : le script ne s'applique qu'à /app.
  */
-const PREFS_SCRIPT = `try{var p=JSON.parse(localStorage.getItem('imgc.prefs')||'{}');var d=document.documentElement;if(p.theme==='light')d.dataset.theme='light';if(p.lang==='en')d.lang='en'}catch(e){}`
+const PREFS_SCRIPT = `try{var l=location.pathname;if(l==='/app'||l.indexOf('/app/')===0){var p=JSON.parse(localStorage.getItem('imgc.prefs')||'{}');var d=document.documentElement;if(p.theme==='light')d.dataset.theme='light';if(p.lang==='en')d.lang='en'}}catch(e){}`
 
 export default function RootLayout({
   children,

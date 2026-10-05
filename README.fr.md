@@ -2,12 +2,10 @@
 
 # Obskura
 
-<sub><code>img-creator</code></sub>
-
 **Un atelier local pour la génération d'images.**
 Un prompt, plusieurs modèles côte à côte — pas de compte, pas de base de données, aucun serveur qui garde vos clés.
 
-[![CI](https://github.com/samuelboulery/img-creator/actions/workflows/ci.yml/badge.svg)](https://github.com/samuelboulery/img-creator/actions/workflows/ci.yml)
+[![CI](https://github.com/samuelboulery/obskura/actions/workflows/ci.yml/badge.svg)](https://github.com/samuelboulery/obskura/actions/workflows/ci.yml)
 [![Licence : MIT](https://img.shields.io/badge/License-MIT-f5a623.svg)](LICENSE)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![TypeScript strict](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
@@ -16,7 +14,7 @@ Un prompt, plusieurs modèles côte à côte — pas de compte, pas de base de d
 
 <img src="docs/screenshots/01-fiche-image-screenmat.webp" alt="Obskura : bande de session, image sélectionnée sur la scène, composeur de prompt et fiche de l'image" width="900">
 
-<sub>Encadrées avec <a href="https://github.com/samuelboulery/screenmat">screenmat</a>. Session de démonstration : les visuels sont dessinés au canvas par le script de capture, pas des sorties de modèle. Les regénérer avec <code>SCREENMAT=../screenmat node scripts/screenshots.mjs</code>.</sub>
+<sub>Encadrées avec <a href="https://github.com/samuelboulery/screenmat">screenmat</a>. Session de démonstration : les visuels sont dessinés au canvas par le script de capture, pas des sorties de modèle. Les regénérer avec <code>SCREENMAT=../screenmat node scripts/screenshots.mjs</code>, <code>pnpm dev</code> lancé.</sub>
 
 </div>
 
@@ -68,8 +66,8 @@ Obskura fait l'inverse. **L'inspecteur affiche le corps réel de la requête**, 
 ## Démarrage
 
 ```bash
-git clone https://github.com/samuelboulery/img-creator.git
-cd img-creator
+git clone https://github.com/samuelboulery/obskura.git
+cd obskura
 pnpm install
 pnpm dev
 ```

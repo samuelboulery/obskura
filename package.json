@@ -16,7 +16,7 @@
       "@humanfs/node": "^0.16.8"
     }
   },
-  "name": "img-creator",
+  "name": "obskura",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -26,13 +26,13 @@
   "description": "A local-first workshop for image generation — one prompt, several models, no account and no database.",
   "license": "MIT",
   "author": "Samuel Boulery",
-  "homepage": "https://github.com/samuelboulery/img-creator#readme",
+  "homepage": "https://github.com/samuelboulery/obskura#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/samuelboulery/img-creator.git"
+    "url": "git+https://github.com/samuelboulery/obskura.git"
   },
   "bugs": {
-    "url": "https://github.com/samuelboulery/img-creator/issues"
+    "url": "https://github.com/samuelboulery/obskura/issues"
   },
   "keywords": [
     "image-generation",

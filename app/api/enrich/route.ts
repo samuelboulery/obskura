@@ -1,7 +1,7 @@
 import { GoogleGenAI } from '@google/genai'
 import OpenAI from 'openai'
 import { NextRequest, NextResponse } from 'next/server'
-import { isJsonRequest, isSameOrigin } from '@/lib/origin-guard'
+import { isJsonRequest, isSameOrigin, readJsonCapped } from '@/lib/origin-guard'
 import { MAX_PROMPT_CHARS } from '@/lib/adapters/validate'
 import { checkRateLimit, clientKey } from '@/lib/rate-limit'
 
@@ -20,6 +20,12 @@ export interface EnrichResponse {
 
 const DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
 const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash'
+
+/** Deux textes de MAX_PROMPT_CHARS en UTF-8 (4 octets au pire), plus l'enveloppe JSON. */
+const MAX_BODY_BYTES = 2 * 4 * MAX_PROMPT_CHARS + 1_000
+
+/** Un identifiant de modèle finit dans le chemin de l'URL amont : ni `/`, ni `?`. */
+const MODEL_ID = /^[\w.-]{1,100}$/
 
 export async function POST(req: NextRequest): Promise<NextResponse<EnrichResponse>> {
   if (!isSameOrigin(req)) {
@@ -52,33 +58,35 @@ export async function POST(req: NextRequest): Promise<NextResponse<EnrichRespons
     )
   }
 
-  let body: EnrichRequest
-
-  try {
-    body = await req.json()
-  } catch {
-    return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
+  const read = await readJsonCapped(req, MAX_BODY_BYTES)
+  if (!read.ok) {
+    const error = read.status === 413 ? 'Corps de requête trop volumineux' : 'Invalid JSON body'
+    return NextResponse.json({ success: false, error }, { status: read.status })
   }
 
-  if (!body.prompt?.trim() || !body.prePrompt?.trim()) {
+  // Le typage ne vaut rien à l'exécution : chaque champ est vérifié.
+  const raw = read.value as Record<string, unknown> | null
+  const { prompt, prePrompt, model } = typeof raw === 'object' && raw !== null ? raw : {}
+
+  if (typeof prompt !== 'string' || typeof prePrompt !== 'string' || !prompt.trim() || !prePrompt.trim()) {
     return NextResponse.json(
       { success: false, error: 'prompt et prePrompt sont requis' },
       { status: 400 }
     )
   }
 
-  if (body.prompt.length > MAX_PROMPT_CHARS || body.prePrompt.length > MAX_PROMPT_CHARS) {
+  if (prompt.length > MAX_PROMPT_CHARS || prePrompt.length > MAX_PROMPT_CHARS) {
     return NextResponse.json(
       { success: false, error: `prompt et prePrompt sont limités à ${MAX_PROMPT_CHARS} caractères` },
       { status: 400 }
     )
   }
 
-  // Le modèle est repris tel quel dans l'appel amont : le borner évite qu'une
-  // valeur hostile choisisse un modèle arbitraire sur la clé de l'utilisateur.
-  if (body.model !== undefined && (typeof body.model !== 'string' || body.model.length > 100)) {
+  if (model !== undefined && (typeof model !== 'string' || !MODEL_ID.test(model))) {
     return NextResponse.json({ success: false, error: 'model invalide' }, { status: 400 })
   }
+
+  const body: EnrichRequest = { prompt, prePrompt, model }
 
   try {
     // Le préfixe de la clé décide du fournisseur : rien d'autre ne le distingue.

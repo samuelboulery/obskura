@@ -39,6 +39,8 @@ export const MAX_REFERENCE_IMAGES = 8
 /** ~8 Mo de base64 cumulés, soit environ 6 Mo d'images réelles. */
 export const MAX_REFERENCE_BASE64_CHARS = 8_000_000
 export const MAX_EXTRA_PARAMS = 20
+/** Corps brut d'une génération : les images de référence, plus la marge du reste. */
+export const MAX_GENERATE_BODY_BYTES = 10_000_000
 
 export class BadRequestError extends Error {
   readonly status = 400

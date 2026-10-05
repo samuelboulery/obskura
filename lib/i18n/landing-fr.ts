@@ -91,7 +91,7 @@ export const landingFr = {
   foot: {
     big: 'Un prompt, plusieurs modèles, côte à côte.',
     source: 'Code source sur GitHub',
-    colophon: ['MIT © 2026 Samuel Boulery', 'Unbounded · Space Grotesk · JetBrains Mono', 'Suite avec screenmat'],
+    colophon: ['MIT © 2026 Samuel Boulery'],
   },
 }
 

@@ -8,7 +8,7 @@ test.describe('landing', () => {
 
     const body = page.getByLabel('Corps de la requête envoyée à GPT Image 2.5 Sunburst')
     await expect(body).toContainText('"model": "gpt-image-2.5-sunburst"')
-    await expect(body).toContainText('Une bulle de savon')
+    await expect(body).toContainText('Une comète traverse')
 
     await page.getByText('Une comète traverse', { exact: false }).first().click()
     await expect(body).toContainText('Une comète traverse')

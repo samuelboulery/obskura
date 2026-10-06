@@ -1,3 +1,4 @@
+import { isImageMimeType } from '@/lib/adapters/validate'
 import type { GenerationParams, Recipe, ReferenceImage } from '@/lib/types'
 
 const FILE_VERSION = 1
@@ -10,7 +11,8 @@ export interface RecipesFile {
 function isReference(value: unknown): value is ReferenceImage {
   if (!value || typeof value !== 'object') return false
   const candidate = value as Partial<ReferenceImage>
-  return typeof candidate.base64 === 'string' && typeof candidate.mimeType === 'string'
+  // Le mime finit dans une URL `data:` : seule une liste fermée y entre.
+  return typeof candidate.base64 === 'string' && isImageMimeType(candidate.mimeType)
 }
 
 function isRecipe(value: unknown): value is Recipe {

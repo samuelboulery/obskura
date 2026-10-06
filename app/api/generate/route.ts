@@ -3,13 +3,14 @@ import { nanoBanana2Adapter } from '@/lib/adapters/nano-banana-2'
 import { gptImage2Adapter } from '@/lib/adapters/gpt-image-2'
 import { gptImage25SunburstAdapter } from '@/lib/adapters/gpt-image-2.5-sunburst'
 import { gptImage25FlareAdapter } from '@/lib/adapters/gpt-image-2.5-flare'
-import { toClientMessage } from '@/lib/adapters/errors'
+import { redactSecrets, toClientMessage } from '@/lib/adapters/errors'
 import {
   BadRequestError,
+  MAX_GENERATE_BODY_BYTES,
   PayloadTooLargeError,
   parseGenerationRequest,
 } from '@/lib/adapters/validate'
-import { isJsonRequest, isSameOrigin } from '@/lib/origin-guard'
+import { isJsonRequest, isSameOrigin, readJsonCapped } from '@/lib/origin-guard'
 import { checkRateLimit, clientKey } from '@/lib/rate-limit'
 import type { AdapterId, GenerateImageAdapter, GenerateResponse } from '@/lib/types'
 
@@ -44,13 +45,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
     )
   }
 
-  let raw: unknown
-
-  try {
-    raw = await req.json()
-  } catch {
-    return NextResponse.json({ success: false, error: 'Invalid JSON body' }, { status: 400 })
+  const read = await readJsonCapped(req, MAX_GENERATE_BODY_BYTES)
+  if (!read.ok) {
+    const error = read.status === 413 ? 'Corps de requête trop volumineux' : 'Invalid JSON body'
+    return NextResponse.json({ success: false, error }, { status: read.status })
   }
+  const raw = read.value
 
   // Le typage de `req.json()` ne vaut rien à l'exécution : tout est vérifié ici.
   let body
@@ -68,25 +68,31 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
   const apiKey = req.headers.get('x-api-key')?.trim() || undefined
   const adapter = ADAPTERS[body.adapterId]
 
+  // Sans annulation, l'appel amont survivrait au délai — et serait facturé.
+  const controller = new AbortController()
+  let timer: ReturnType<typeof setTimeout> | undefined
+
   try {
     const results = await Promise.race([
-      adapter.generate(body, apiKey),
-      new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error('Délai dépassé par le modèle')),
-          UPSTREAM_TIMEOUT_MS
-        )
-      ),
+      adapter.generate(body, apiKey, controller.signal),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => {
+          controller.abort()
+          reject(new Error('Délai dépassé par le modèle'))
+        }, UPSTREAM_TIMEOUT_MS)
+      }),
     ])
 
     return NextResponse.json({ success: true, data: results })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
-    console.error('[generate]', message)
+    console.error('[generate]', redactSecrets(message, apiKey))
 
     return NextResponse.json(
       { success: false, error: toClientMessage(message) },
       { status: 500 }
     )
+  } finally {
+    clearTimeout(timer)
   }
 }

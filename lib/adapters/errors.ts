@@ -46,3 +46,16 @@ const MESSAGES: Record<UpstreamFailure, string> = {
 export function toClientMessage(message: string): string {
   return MESSAGES[classifyUpstreamError(message)]
 }
+
+const KEY_PATTERNS = /AIza[\w-]{10,}|sk-[\w-]{10,}|([?&]key=)[^&\s"']+/g
+
+/**
+ * Message destiné aux logs serveur : motifs de clé connus masqués, ainsi que
+ * les clés passées en argument, quelle que soit leur forme.
+ */
+export function redactSecrets(message: string, ...keys: (string | undefined)[]): string {
+  let out = message
+  // Sous 8 caractères, le remplacement masquerait des mots ordinaires.
+  for (const key of keys) if (key && key.length >= 8) out = out.replaceAll(key, '***')
+  return out.replace(KEY_PATTERNS, (_, query?: string) => (query ? `${query}***` : '***'))
+}

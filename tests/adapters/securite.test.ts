@@ -1,6 +1,8 @@
-import { describe, expect, test } from 'vitest'
-import { mergeExtraParams } from '@/lib/adapters/shared'
-import { buildNanoBanana2Payload } from '@/lib/adapters/nano-banana-2'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+import { mergeExtraParams, serverKey } from '@/lib/adapters/shared'
+import { buildNanoBanana2Payload, nanoBanana2Adapter } from '@/lib/adapters/nano-banana-2'
+import { gptImage2Adapter } from '@/lib/adapters/gpt-image-2'
+import { parseGenerationRequest } from '@/lib/adapters/validate'
 import { isJsonRequest, isSameOrigin } from '@/lib/origin-guard'
 import { checkRateLimit, clientKey, resetRateLimit } from '@/lib/rate-limit'
 import type { GenerationRequest } from '@/lib/types'
@@ -162,5 +164,75 @@ describe('rate limit', () => {
 
     expect(checkRateLimit('test-ip').allowed).toBe(false)
     expect(checkRateLimit('test-ip').retryAfter).toBeGreaterThan(0)
+  })
+})
+
+describe('rate limit — en-tête IP de la plateforme', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  function req(ip: string) {
+    return new Request('https://atelier.test/api/generate', {
+      method: 'POST',
+      headers: { 'x-nf-client-connection-ip': ip },
+    })
+  }
+
+  test('déclaré par TRUSTED_IP_HEADER, il distingue les clients', () => {
+    vi.stubEnv('TRUSTED_IP_HEADER', 'x-nf-client-connection-ip')
+    resetRateLimit()
+    for (let i = 0; i < 10; i++) checkRateLimit(clientKey(req('1.1.1.1')))
+
+    // Un client qui épuise sa limite ne bloque plus les autres.
+    expect(checkRateLimit(clientKey(req('2.2.2.2'))).allowed).toBe(true)
+    expect(checkRateLimit(clientKey(req('1.1.1.1'))).allowed).toBe(false)
+  })
+
+  test('non déclaré, il est ignoré — un client pourrait le forger', () => {
+    vi.stubEnv('TRUSTED_IP_HEADER', '')
+    expect(clientKey(req('1.1.1.1'))).toBe('local')
+  })
+})
+
+describe('clé serveur — repli sur opt-in en production', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  test('en production, sans ALLOW_SERVER_KEY, aucune clé serveur', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('ALLOW_SERVER_KEY', '')
+    vi.stubEnv('GEMINI_API_KEY', 'cle-serveur')
+    expect(serverKey('GEMINI_API_KEY')).toBeUndefined()
+  })
+
+  test('en production, ALLOW_SERVER_KEY=1 réactive le repli', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('ALLOW_SERVER_KEY', '1')
+    vi.stubEnv('GEMINI_API_KEY', 'cle-serveur')
+    expect(serverKey('GEMINI_API_KEY')).toBe('cle-serveur')
+  })
+
+  test('en développement, .env.local suffit', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    vi.stubEnv('OPENAI_API_KEY', 'cle-locale')
+    expect(serverKey('OPENAI_API_KEY')).toBe('cle-locale')
+  })
+
+  const requete = () => parseGenerationRequest({
+    adapterId: 'nano-banana-2',
+    prompt: 'un phare',
+    params: {
+      aspectRatio: '1:1', resolution: '2K', batch: 1, seed: null, seedLock: false,
+      fileFormat: 'png', transparent: false, compression: 80,
+      personGeneration: 'allow_adult', moderation: 'auto', language: 'fr', extraParams: [],
+    },
+  })
+
+  test.each([
+    ['nano-banana-2', nanoBanana2Adapter, 'GEMINI_API_KEY'],
+    ['gpt-image-2', gptImage2Adapter, 'OPENAI_API_KEY'],
+  ] as const)('%s refuse un appel sans clé client en production', async (_, adapter, env) => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('ALLOW_SERVER_KEY', '')
+    vi.stubEnv(env, 'cle-serveur')
+    await expect(adapter.generate(requete(), undefined)).rejects.toThrow(/Aucune clé/)
   })
 })

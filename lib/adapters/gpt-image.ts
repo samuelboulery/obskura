@@ -1,6 +1,6 @@
 import OpenAI, { toFile } from 'openai'
 import { GPT_SIZES, pruneUnsupported } from './capabilities'
-import { composePrompt, mergeExtraParams, mergeNegatives } from './shared'
+import { composePrompt, mergeExtraParams, mergeNegatives, serverKey } from './shared'
 import type {
   AdapterId,
   GenerateImageAdapter,
@@ -89,9 +89,10 @@ export function makeGptImageAdapter(modelId: GptImageModelId): GenerateImageAdap
   return {
     async generate(
       request: GenerationRequest,
-      apiKeyOverride?: string
+      apiKeyOverride?: string,
+      signal?: AbortSignal
     ): Promise<GenerationResult[]> {
-      const apiKey = apiKeyOverride ?? process.env.OPENAI_API_KEY
+      const apiKey = apiKeyOverride ?? serverKey('OPENAI_API_KEY')
       if (!apiKey) {
         throw new Error(
           "Aucune clé API OpenAI configurée — renseignez-la dans l'interface ou dans .env.local"
@@ -128,9 +129,10 @@ export function makeGptImageAdapter(modelId: GptImageModelId): GenerateImageAdap
               image: await Promise.all(
                 references.map((image, index) => referenceToFile(image, `ref-${index}.png`))
               ),
-            } as unknown as OpenAI.Images.ImageEditParamsNonStreaming)
+            } as unknown as OpenAI.Images.ImageEditParamsNonStreaming, { signal })
           : await openai.images.generate(
-              common as unknown as OpenAI.Images.ImageGenerateParamsNonStreaming
+              common as unknown as OpenAI.Images.ImageGenerateParamsNonStreaming,
+              { signal }
             )
 
       const images: GenerationResult[] = (response.data ?? [])

@@ -39,6 +39,17 @@ export const MAX_REFERENCE_IMAGES = 8
 /** ~8 Mo de base64 cumulés, soit environ 6 Mo d'images réelles. */
 export const MAX_REFERENCE_BASE64_CHARS = 8_000_000
 export const MAX_EXTRA_PARAMS = 20
+/**
+ * Formats d'image acceptés en référence. SVG exclu : c'est un document
+ * actif, pas une image matricielle, et le client ne produit que du JPEG.
+ */
+export const IMAGE_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'] as const
+
+export function isImageMimeType(value: unknown): boolean {
+  return (IMAGE_MIME_TYPES as readonly unknown[]).includes(value)
+}
+/** Corps brut d'une génération : les images de référence, plus la marge du reste. */
+export const MAX_GENERATE_BODY_BYTES = 10_000_000
 
 export class BadRequestError extends Error {
   readonly status = 400
@@ -93,8 +104,8 @@ function referenceImages(value: unknown, field: string): ReferenceImage[] | unde
     if (typeof image.base64 !== 'string' || !image.base64) {
       fail(`${field}[${index}].base64 manquant`)
     }
-    if (typeof image.mimeType !== 'string' || !image.mimeType.startsWith('image/')) {
-      fail(`${field}[${index}].mimeType doit être un type image/*`)
+    if (typeof image.mimeType !== 'string' || !isImageMimeType(image.mimeType)) {
+      fail(`${field}[${index}].mimeType doit être l'un de ${IMAGE_MIME_TYPES.join(', ')}`)
     }
 
     return { base64: image.base64, mimeType: image.mimeType }

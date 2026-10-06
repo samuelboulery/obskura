@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai'
 import { pruneUnsupported } from './capabilities'
-import { composePrompt, mergeExtraParams, mergeNegatives, resolveSeed } from './shared'
+import { composePrompt, mergeExtraParams, mergeNegatives, resolveSeed, serverKey } from './shared'
 import type {
   GenerateImageAdapter,
   GenerationRequest,
@@ -75,9 +75,10 @@ export const nanoBanana2Adapter: GenerateImageAdapter = {
    */
   async generate(
     request: GenerationRequest,
-    apiKeyOverride?: string
+    apiKeyOverride?: string,
+    signal?: AbortSignal
   ): Promise<GenerationResult[]> {
-    const apiKey = apiKeyOverride ?? process.env.GEMINI_API_KEY
+    const apiKey = apiKeyOverride ?? serverKey('GEMINI_API_KEY')
     if (!apiKey) {
       throw new Error(
         "Aucune clé API configurée — renseignez-la dans l'interface ou dans .env.local"
@@ -89,7 +90,10 @@ export const nanoBanana2Adapter: GenerateImageAdapter = {
       typeof ai.models.generateContent
     >[0]
 
-    const response = await ai.models.generateContent(payload)
+    const response = await ai.models.generateContent({
+      ...payload,
+      config: { ...payload.config, abortSignal: signal },
+    })
 
     const images: GenerationResult[] = (response.candidates ?? []).flatMap((candidate) =>
       (candidate.content?.parts ?? [])

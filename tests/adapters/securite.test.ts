@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { mergeExtraParams, serverKey } from '@/lib/adapters/shared'
 import { buildNanoBanana2Payload, nanoBanana2Adapter } from '@/lib/adapters/nano-banana-2'
+import { nanoBanana21Adapter } from '@/lib/adapters/nano-banana-2.1'
 import { gptImage2Adapter } from '@/lib/adapters/gpt-image-2'
 import { parseGenerationRequest } from '@/lib/adapters/validate'
 import { isJsonRequest, isSameOrigin } from '@/lib/origin-guard'
@@ -95,7 +96,7 @@ describe('extraParams — la soupape ne réécrit pas la requête', () => {
 
     const out = buildNanoBanana2Payload(request) as Record<string, unknown>
 
-    expect(out.model).toBe('gemini-3.1-flash-image-preview')
+    expect(out.model).toBe('gemini-3.1-flash-image')
     expect(Array.isArray(out.contents)).toBe(true)
   })
 })
@@ -228,6 +229,7 @@ describe('clé serveur — repli sur opt-in en production', () => {
 
   test.each([
     ['nano-banana-2', nanoBanana2Adapter, 'GEMINI_API_KEY'],
+    ['nano-banana-2.1', nanoBanana21Adapter, 'GEMINI_API_KEY'],
     ['gpt-image-2', gptImage2Adapter, 'OPENAI_API_KEY'],
   ] as const)('%s refuse un appel sans clé client en production', async (_, adapter, env) => {
     vi.stubEnv('NODE_ENV', 'production')

@@ -66,8 +66,8 @@ export const landingFr = {
   },
   models: {
     eyebrow: 'Modèles',
-    title: 'Quatre modèles, un seul outil.',
-    body: "Nano Banana 2, GPT Image 2, GPT Image 2.5 Sunburst et Flare, chacun avec son tarif estimé. Changer de modèle adapte la requête : les réglages qu'il ne lit pas sont retirés, et vous le voyez.",
+    title: 'Cinq modèles, un seul outil.',
+    body: "Nano Banana 2 et 2.1, GPT Image 2, GPT Image 2.5 Sunburst et Flare, chacun avec son tarif estimé. Changer de modèle adapte la requête : les réglages qu'il ne lit pas sont retirés, et vous le voyez.",
     legend: 'Modèle',
     perImage: '/ image',
     settings: 'Vos réglages',
@@ -84,7 +84,7 @@ export const landingFr = {
     nodes: [
       { label: 'Navigateur', title: 'Votre machine', items: ['clés · réglages · session', 'localStorage'] },
       { label: 'Route', title: '/api/generate', items: ['valide la requête', 'limite le débit', "choisit l'adapter", 'ne garde rien'] },
-      { label: 'Fournisseur', title: 'Google · OpenAI', items: ['Nano Banana 2', 'GPT Image 2 · 2.5'] },
+      { label: 'Fournisseur', title: 'Google · OpenAI', items: ['Nano Banana 2 · 2.1', 'GPT Image 2 · 2.5'] },
     ],
     wires: ['x-api-key', 'corps exact'],
   },

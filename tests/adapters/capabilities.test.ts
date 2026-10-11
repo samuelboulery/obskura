@@ -95,6 +95,11 @@ describe('contrat : les capacités pilotent réellement le payload', () => {
     expect(corps.personGeneration).toBeUndefined()
   })
 
+  test('chaque modèle Google appelle son identifiant amont', () => {
+    expect(buildPayload(request('nano-banana-2')).model).toBe('gemini-3.1-flash-image')
+    expect(buildPayload(request('nano-banana-2.1')).model).toBe('gemini-nano-banana-2.1')
+  })
+
   test('nano-banana-2 n’envoie ni type de fichier ni compression', () => {
     const corps = buildPayload(request('nano-banana-2')) as Record<string, unknown>
 
@@ -157,6 +162,7 @@ describe('descripteurs de modèles', () => {
 
   test('les crans de résolution suivent le modèle', () => {
     expect(resolutionsOf('nano-banana-2')).toEqual(['1K', '2K', '4K'])
+    expect(resolutionsOf('nano-banana-2.1')).toEqual(['1K', '2K', '4K'])
     expect(resolutionsOf('gpt-image-2')).toEqual(['1K', '2K', '4K'])
     expect(resolutionsOf('gpt-image-2.5-flare')).toEqual(['1K', '2K', '4K', '6K', '8K'])
   })

@@ -37,11 +37,11 @@ export default function OpengraphImage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
           <div style={{ fontSize: 84, fontWeight: 600, lineHeight: 1.05 }}>Un prompt entre. Une image sort.</div>
           <div style={{ fontSize: 34, color: SOFT, lineHeight: 1.35 }}>
-            Quatre modèles, vos clés, rien hors du navigateur.
+            Cinq modèles, vos clés, rien hors du navigateur.
           </div>
         </div>
         <div style={{ display: 'flex', gap: 16, fontSize: 26, color: SOFT }}>
-          <div style={pill}>nano-banana-2</div>
+          <div style={pill}>nano-banana-2 · 2.1</div>
           <div style={pill}>gpt-image-2 · 2.5</div>
           <div style={pill}>sans compte</div>
         </div>

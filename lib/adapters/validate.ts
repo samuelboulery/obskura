@@ -1,4 +1,4 @@
-import { resolutionsOf } from './capabilities'
+import { ADAPTERS, resolutionsOf } from './capabilities'
 import type {
   AdapterId,
   ExtraParam,
@@ -26,12 +26,6 @@ export const FILE_FORMATS = ['png', 'jpeg', 'webp'] as const
 export const PERSON_GENERATIONS = ['allow_adult', 'allow_all', 'dont_allow'] as const
 export const MODERATIONS = ['auto', 'low'] as const
 export const LANGUAGES = ['auto', 'fr', 'en'] as const
-export const ADAPTER_IDS = [
-  'nano-banana-2',
-  'gpt-image-2',
-  'gpt-image-2.5-sunburst',
-  'gpt-image-2.5-flare',
-] as const
 
 /** Plafonds : ils bornent la mémoire du serveur et la facture de l'utilisateur. */
 export const MAX_PROMPT_CHARS = 8_000
@@ -178,7 +172,7 @@ export function parseGenerationRequest(raw: unknown): GenerationRequest {
     fail(`prompt dépasse ${MAX_PROMPT_CHARS} caractères`)
   }
 
-  const adapterId = oneOf(body.adapterId, ADAPTER_IDS, 'adapterId') as AdapterId
+  const adapterId = oneOf(body.adapterId, ADAPTERS, 'adapterId')
   const subjectImages = referenceImages(body.subjectImages, 'subjectImages')
   const styleImages = referenceImages(body.styleImages, 'styleImages')
 

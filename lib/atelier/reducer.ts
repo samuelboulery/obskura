@@ -27,7 +27,7 @@ export interface AtelierState {
 }
 
 export const initialAtelierState: AtelierState = {
-  adapterId: 'nano-banana-2',
+  adapterId: 'nano-banana-2.1',
   parallelId: null,
   selectedIds: [],
   focusId: null,

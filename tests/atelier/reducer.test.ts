@@ -6,6 +6,10 @@ function reduce(state: AtelierState, ...actions: Parameters<typeof atelierReduce
 }
 
 describe('modèles', () => {
+  test('Nano Banana 2.1 est le modèle par défaut', () => {
+    expect(initialAtelierState.adapterId).toBe('nano-banana-2.1')
+  })
+
   test('choisir un modèle le pose, sans toucher au parallèle', () => {
     const state = reduce(
       initialAtelierState,

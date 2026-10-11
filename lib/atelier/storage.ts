@@ -33,6 +33,8 @@ export interface Prefs {
   pricing: Pricing
   enrichPrePrompt: string
   enrichKey: EnrichKey
+  /** Modèle de texte imposé ; vide = celui par défaut du fournisseur de la clé. */
+  enrichModel: string
   /** Sombre d'abord : la couleur d'une image se juge sur un neutre sombre. */
   theme: Theme
   lang: Lang
@@ -42,6 +44,7 @@ export const DEFAULT_PREFS: Prefs = {
   pricing: DEFAULT_PRICING,
   enrichPrePrompt: ENRICH_PRE_PROMPT,
   enrichKey: 'gemini',
+  enrichModel: '',
   theme: 'dark',
   lang: 'fr',
 }
@@ -134,6 +137,7 @@ export function readPrefs(): Prefs {
     enrichPrePrompt:
       typeof stored.enrichPrePrompt === 'string' ? stored.enrichPrePrompt : DEFAULT_PREFS.enrichPrePrompt,
     enrichKey: oneOf(stored.enrichKey, ['gemini', 'openai', 'text'] as const, DEFAULT_PREFS.enrichKey),
+    enrichModel: typeof stored.enrichModel === 'string' ? stored.enrichModel : DEFAULT_PREFS.enrichModel,
     theme: oneOf(stored.theme, ['dark', 'light'] as const, DEFAULT_PREFS.theme),
     lang: oneOf(stored.lang, LANGS, DEFAULT_PREFS.lang),
   }

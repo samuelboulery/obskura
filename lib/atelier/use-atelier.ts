@@ -563,7 +563,11 @@ export function useAtelier() {
       const response = await fetch('/api/enrich', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey },
-        body: JSON.stringify({ prompt: original, prePrompt: prefs.enrichPrePrompt }),
+        body: JSON.stringify({
+          prompt: original,
+          prePrompt: prefs.enrichPrePrompt,
+          model: prefs.enrichModel.trim() || undefined,
+        }),
       })
       const json: EnrichResponse = await response.json()
       if (!json.success || !json.data?.prompt) {

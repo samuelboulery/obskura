@@ -6,6 +6,7 @@ import Dialog from './Dialog'
 import { Field, IconButton, Section, Segmented } from '@/components/atelier/ui'
 import { ADAPTERS, MODELS } from '@/lib/adapters/capabilities'
 import type { Prefs } from '@/lib/atelier/storage'
+import { ENRICH_DEFAULT_MODEL } from '@/lib/enrich'
 import { useT } from '@/lib/i18n'
 import type { KeyKind } from '@/lib/types'
 
@@ -111,6 +112,16 @@ export default function KeysDialog({ keys, onKeyChange, prefs, onPrefsChange, on
         {prefs.enrichKey === 'text' && (
           <KeyRow label={t.keys.otherKey} value={keys.text} onChange={(value) => onKeyChange('text', value)} />
         )}
+        <label className="flex flex-col gap-1.5">
+          <span className="lbl">{t.keys.enrichModel}</span>
+          <Field
+            autoComplete="off"
+            spellCheck={false}
+            placeholder={Object.values(ENRICH_DEFAULT_MODEL).join(' · ')}
+            value={prefs.enrichModel}
+            onChange={(event) => patch({ enrichModel: event.target.value })}
+          />
+        </label>
         <label className="flex flex-col gap-1.5">
           <span className="lbl">{t.keys.instructions}</span>
           <textarea

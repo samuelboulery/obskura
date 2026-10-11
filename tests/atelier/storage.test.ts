@@ -60,4 +60,12 @@ describe('storage', () => {
     expect(prefs.pricing).toEqual(DEFAULT_PREFS.pricing)
     expect(prefs.enrichPrePrompt).toBe(DEFAULT_PREFS.enrichPrePrompt)
   })
+
+  test('le modèle d’enrichissement est vide par défaut et gardé s’il est saisi', () => {
+    expect(readPrefs().enrichModel).toBe('')
+    writeJson(STORAGE_KEYS.prefs, { enrichModel: 'claude-haiku-5-5' })
+    expect(readPrefs().enrichModel).toBe('claude-haiku-5-5')
+    writeJson(STORAGE_KEYS.prefs, { enrichModel: 42 })
+    expect(readPrefs().enrichModel).toBe('')
+  })
 })

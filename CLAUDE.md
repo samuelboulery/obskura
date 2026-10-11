@@ -1,6 +1,6 @@
 # Obskura
 
-Interface multi-API pour la génération d'images, marque **Obskura** (suite avec screenmat). Le prompt (positif, négatif, références de sujet et de style) part vers `gemini-3.1-flash-image-preview` (« Nano Banana 2 »), `gpt-image-2`, `gpt-image-2.5-sunburst` ou `gpt-image-2.5-flare`. Un seul espace de travail : la **sélection** décide de l'inspecteur et de la scène (rien → réglages ; une image → sa fiche ; deux → comparaison ; davantage → export). Un second modèle peut tourner « en parallèle ».
+Interface multi-API pour la génération d'images, marque **Obskura** (suite avec screenmat). Le prompt (positif, négatif, références de sujet et de style) part vers `gemini-3.1-flash-image` (« Nano Banana 2 »), `gpt-image-2`, `gpt-image-2.5-sunburst` ou `gpt-image-2.5-flare`. Un seul espace de travail : la **sélection** décide de l'inspecteur et de la scène (rien → réglages ; une image → sa fiche ; deux → comparaison ; davantage → export). Un second modèle peut tourner « en parallèle ».
 
 **Aucune base de données, aucun compte.** Tout ce qui persiste — clés, réglages, session, presets — vit dans `localStorage`. Les presets s'exportent en `.json`.
 
@@ -87,7 +87,7 @@ pnpm test:e2e         # Playwright (parcours critique)
 
 ## Notes API
 
-**nano-banana-2** (`gemini-3.1-flash-image-preview`) — supporte format, résolution (`imageConfig.imageSize`), variantes (`candidateCount`), graine, `personGeneration` et les références en `inlineData`. Ignore type de fichier, fond transparent, compression, modération.
+**nano-banana-2** (`gemini-3.1-flash-image`) — supporte format, résolution (`imageConfig.imageSize`), variantes (`candidateCount`), graine, `personGeneration` et les références en `inlineData`. Ignore type de fichier, fond transparent, compression, modération.
 
 **gpt-image-2 / 2.5** — supporte format (`size`), qualité (dérivée de la résolution : 1K `low`, 2K `medium`, 4K `high` ; 6K `xhigh` et 8K `max` en 2.5 seulement), variantes (`n`), type de fichier, fond, compression et modération. Ignore graine et `personGeneration`.
 

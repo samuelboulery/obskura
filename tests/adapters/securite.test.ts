@@ -95,7 +95,7 @@ describe('extraParams — la soupape ne réécrit pas la requête', () => {
 
     const out = buildNanoBanana2Payload(request) as Record<string, unknown>
 
-    expect(out.model).toBe('gemini-3.1-flash-image-preview')
+    expect(out.model).toBe('gemini-3.1-flash-image')
     expect(Array.isArray(out.contents)).toBe(true)
   })
 })

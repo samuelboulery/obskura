@@ -68,7 +68,7 @@ describe('buildNanoBanana2Payload', () => {
     )
 
     expect(payload).toEqual({
-      model: 'gemini-3.1-flash-image-preview',
+      model: 'gemini-3.1-flash-image',
       contents: [
         {
           role: 'user',

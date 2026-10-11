@@ -172,7 +172,7 @@ export function parseGenerationRequest(raw: unknown): GenerationRequest {
     fail(`prompt dépasse ${MAX_PROMPT_CHARS} caractères`)
   }
 
-  const adapterId = oneOf(body.adapterId, ADAPTERS, 'adapterId') as AdapterId
+  const adapterId = oneOf(body.adapterId, ADAPTERS, 'adapterId')
   const subjectImages = referenceImages(body.subjectImages, 'subjectImages')
   const styleImages = referenceImages(body.styleImages, 'styleImages')
 

@@ -1,10 +1,12 @@
 import { buildGptImage2Payload, type GptImage2Payload } from './gpt-image-2'
 import { buildGptImage25SunburstPayload } from './gpt-image-2.5-sunburst'
 import { buildGptImage25FlarePayload } from './gpt-image-2.5-flare'
-import { buildNanoBanana2Payload, type NanoBanana2Payload } from './nano-banana-2'
+import type { GeminiImagePayload } from './gemini-image'
+import { buildNanoBanana2Payload } from './nano-banana-2'
+import { buildNanoBanana21Payload } from './nano-banana-2.1'
 import type { GenerationRequest } from '@/lib/types'
 
-export type AdapterPayload = NanoBanana2Payload | GptImage2Payload
+export type AdapterPayload = GeminiImagePayload | GptImage2Payload
 
 /** Corps réel de la requête, pour le modèle sélectionné. */
 export function buildPayload(request: GenerationRequest): AdapterPayload {
@@ -13,6 +15,7 @@ export function buildPayload(request: GenerationRequest): AdapterPayload {
     case 'gpt-image-2.5-sunburst': return buildGptImage25SunburstPayload(request)
     case 'gpt-image-2.5-flare': return buildGptImage25FlarePayload(request)
     case 'nano-banana-2': return buildNanoBanana2Payload(request)
+    case 'nano-banana-2.1': return buildNanoBanana21Payload(request)
   }
 }
 

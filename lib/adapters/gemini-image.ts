@@ -15,6 +15,7 @@ export type GeminiImageModelId = Extract<AdapterId, `nano-banana-${string}`>
 /** Contrairement à OpenAI, l'identifiant de l'app n'est pas celui de l'API. */
 const UPSTREAM_MODEL: Record<GeminiImageModelId, string> = {
   'nano-banana-2': 'gemini-3.1-flash-image',
+  'nano-banana-2.1': 'gemini-nano-banana-2.1',
 }
 
 function imagePart(image: ReferenceImage, weight: number) {

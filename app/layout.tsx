@@ -24,14 +24,14 @@ const unbounded = Unbounded({
 
 const title = 'Obskura'
 const description =
-  "Un prompt entre, une image sort. Génération d'images multi-modèles (Nano Banana 2, GPT Image), avec votre propre clé. Sans compte ni base de données : tout reste dans le navigateur."
+  "Un prompt entre, une image sort. Génération d'images multi-modèles (Nano Banana 2 et 2.1, GPT Image), avec votre propre clé. Sans compte ni base de données : tout reste dans le navigateur."
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://obskura.netlify.app'),
   title: { default: title, template: '%s — Obskura' },
   description,
   applicationName: 'Obskura',
-  keywords: ["génération d'images", 'IA', 'nano-banana-2', 'gpt-image-2', 'prompt'],
+  keywords: ["génération d'images", 'IA', 'nano-banana-2', 'nano-banana-2.1', 'gpt-image-2', 'prompt'],
   openGraph: {
     type: 'website',
     locale: 'fr_FR',

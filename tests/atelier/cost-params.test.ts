@@ -5,26 +5,26 @@ import { ADAPTERS, ALL_PARAMS } from '@/lib/adapters/capabilities'
 
 describe('estimation de coût', () => {
   test('tarif du modèle multiplié par le nombre de variantes', () => {
-    expect(estimateCost('nano-banana-2', 1)).toBe(0.03)
-    expect(estimateCost('nano-banana-2', 4)).toBe(0.12)
+    expect(estimateCost('nano-banana-2.1', 1)).toBe(0.03)
+    expect(estimateCost('nano-banana-2.1', 4)).toBe(0.12)
     expect(estimateCost('gpt-image-2', 8)).toBe(0.32)
   })
 
   test('un tarif personnalisé remplace le tarif par défaut', () => {
-    const cher = { ...DEFAULT_PRICING, 'nano-banana-2': 1.5 }
-    expect(estimateCost('nano-banana-2', 2, cher)).toBe(3)
+    const cher = { ...DEFAULT_PRICING, 'nano-banana-2.1': 1.5 }
+    expect(estimateCost('nano-banana-2.1', 2, cher)).toBe(3)
   })
 
   test('un lot absurde retombe sur une image — pas de NaN affiché', () => {
-    expect(estimateCost('nano-banana-2', 0)).toBe(0.03)
-    expect(estimateCost('nano-banana-2', -5)).toBe(0.03)
-    expect(estimateCost('nano-banana-2', Number.NaN)).toBe(0.03)
-    expect(estimateCost('nano-banana-2', Number.POSITIVE_INFINITY)).toBe(0.03)
+    expect(estimateCost('nano-banana-2.1', 0)).toBe(0.03)
+    expect(estimateCost('nano-banana-2.1', -5)).toBe(0.03)
+    expect(estimateCost('nano-banana-2.1', Number.NaN)).toBe(0.03)
+    expect(estimateCost('nano-banana-2.1', Number.POSITIVE_INFINITY)).toBe(0.03)
   })
 
   test('l’arrondi évite les traînées de virgule flottante', () => {
     // 0.03 × 3 vaut 0.09000000000000001 en IEEE 754.
-    expect(estimateCost('nano-banana-2', 3)).toBe(0.09)
+    expect(estimateCost('nano-banana-2.1', 3)).toBe(0.09)
   })
 
   test('chaque adapter a un tarif par défaut', () => {

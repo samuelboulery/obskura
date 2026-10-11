@@ -55,6 +55,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
     "@google/genai": "^1.48.0",
     "@phosphor-icons/react": "^2.1.10",
     "next": "16.3.8",

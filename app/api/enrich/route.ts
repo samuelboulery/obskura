@@ -1,9 +1,11 @@
+import Anthropic from '@anthropic-ai/sdk'
 import { GoogleGenAI } from '@google/genai'
 import OpenAI from 'openai'
 import { NextRequest, NextResponse } from 'next/server'
 import { isJsonRequest, isSameOrigin, readJsonCapped } from '@/lib/origin-guard'
 import { MAX_PROMPT_CHARS } from '@/lib/adapters/validate'
 import { checkRateLimit, clientKey } from '@/lib/rate-limit'
+import { ENRICH_DEFAULT_MODEL, enrichProvider, type EnrichProvider } from '@/lib/enrich'
 
 export interface EnrichRequest {
   prompt: string
@@ -18,8 +20,19 @@ export interface EnrichResponse {
   error?: string
 }
 
-const DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
-const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash'
+/** Une réécriture tient en une phrase ; le plafond laisse la place à la réflexion de Haiku. */
+const ANTHROPIC_MAX_TOKENS = 4096
+
+/** Le message amont, jamais renvoyé tel quel, est ramené à une cause lisible. */
+const CLIENT_ERRORS: [RegExp, string][] = [
+  [/api.key|authentication|unauthorized/i, 'Clé invalide pour l’enrichissement'],
+  [/quota|rate.limit|billing/i, 'Quota de la clé atteint'],
+  [/not.?found|does not exist/i, 'Modèle introuvable pour cette clé'],
+]
+
+function clientMessage(upstream: string): string {
+  return CLIENT_ERRORS.find(([pattern]) => pattern.test(upstream))?.[1] ?? "Échec de l'enrichissement"
+}
 
 /** Deux textes de MAX_PROMPT_CHARS en UTF-8 (4 octets au pire), plus l'enveloppe JSON. */
 const MAX_BODY_BYTES = 2 * 4 * MAX_PROMPT_CHARS + 1_000
@@ -89,10 +102,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<EnrichRespons
   const body: EnrichRequest = { prompt, prePrompt, model }
 
   try {
-    // Le préfixe de la clé décide du fournisseur : rien d'autre ne le distingue.
-    const enriched = apiKey.startsWith('sk-')
-      ? await enrichWithOpenAI(apiKey, body)
-      : await enrichWithGemini(apiKey, body)
+    const enriched = await ENRICHERS[enrichProvider(apiKey)](apiKey, body)
 
     if (!enriched.trim()) throw new Error('Réponse vide du modèle de texte')
 
@@ -102,20 +112,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<EnrichRespons
     // Ni la clé ni le prompt ne sont journalisés.
     console.error('[enrich] échec de la requête')
 
-    const clientMessage = /api.key|authentication|unauthorized/i.test(message)
-      ? 'Clé invalide pour l’enrichissement'
-      : /quota|rate.limit|billing/i.test(message)
-        ? 'Quota de la clé atteint'
-        : "Échec de l'enrichissement"
-
-    return NextResponse.json({ success: false, error: clientMessage }, { status: 500 })
+    return NextResponse.json({ success: false, error: clientMessage(message) }, { status: 500 })
   }
 }
 
 async function enrichWithOpenAI(apiKey: string, body: EnrichRequest): Promise<string> {
   const openai = new OpenAI({ apiKey })
   const completion = await openai.chat.completions.create({
-    model: body.model || DEFAULT_OPENAI_MODEL,
+    model: body.model || ENRICH_DEFAULT_MODEL.openai,
     messages: [
       { role: 'system', content: body.prePrompt },
       { role: 'user', content: body.prompt },
@@ -128,9 +132,27 @@ async function enrichWithOpenAI(apiKey: string, body: EnrichRequest): Promise<st
 async function enrichWithGemini(apiKey: string, body: EnrichRequest): Promise<string> {
   const ai = new GoogleGenAI({ apiKey })
   const response = await ai.models.generateContent({
-    model: body.model || DEFAULT_GEMINI_MODEL,
+    model: body.model || ENRICH_DEFAULT_MODEL.gemini,
     contents: [{ role: 'user', parts: [{ text: `${body.prePrompt}\n\n${body.prompt}` }] }],
   })
 
   return response.text ?? ''
+}
+
+async function enrichWithAnthropic(apiKey: string, body: EnrichRequest): Promise<string> {
+  const anthropic = new Anthropic({ apiKey })
+  const message = await anthropic.messages.create({
+    model: body.model || ENRICH_DEFAULT_MODEL.anthropic,
+    max_tokens: ANTHROPIC_MAX_TOKENS,
+    system: body.prePrompt,
+    messages: [{ role: 'user', content: body.prompt }],
+  })
+
+  return message.content.flatMap((block) => (block.type === 'text' ? [block.text] : [])).join('')
+}
+
+const ENRICHERS: Record<EnrichProvider, (apiKey: string, body: EnrichRequest) => Promise<string>> = {
+  anthropic: enrichWithAnthropic,
+  openai: enrichWithOpenAI,
+  gemini: enrichWithGemini,
 }

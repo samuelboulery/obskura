@@ -100,31 +100,36 @@ function gptSpec(id: AdapterId, name: string, qualities: ValueOption<Resolution>
   }
 }
 
-export const MODELS: Record<AdapterId, ModelSpec> = {
-  'nano-banana-2': {
-    id: 'nano-banana-2',
-    name: 'Nano Banana 2',
+const GEMINI_RESOLUTIONS: ValueOption<Resolution>[] = [
+  { value: '1K', label: '1K' },
+  { value: '2K', label: '2K' },
+  { value: '4K', label: '4K' },
+]
+
+const GEMINI_SUPPORTED: readonly PayloadParam[] = [
+  'aspectRatio',
+  'resolution',
+  'batch',
+  'seed',
+  'personGeneration',
+  'language',
+  'extraParams',
+]
+
+function geminiSpec(id: AdapterId, name: string): ModelSpec {
+  return {
+    id,
+    name,
     provider: 'Google',
     keyKind: 'gemini',
-    resolution: {
-      kind: 'resolution',
-      options: [
-        { value: '1K', label: '1K' },
-        { value: '2K', label: '2K' },
-        { value: '4K', label: '4K' },
-      ],
-    },
+    resolution: { kind: 'resolution', options: GEMINI_RESOLUTIONS },
     referenceWeights: true,
-    supported: [
-      'aspectRatio',
-      'resolution',
-      'batch',
-      'seed',
-      'personGeneration',
-      'language',
-      'extraParams',
-    ],
-  },
+    supported: GEMINI_SUPPORTED,
+  }
+}
+
+export const MODELS: Record<AdapterId, ModelSpec> = {
+  'nano-banana-2': geminiSpec('nano-banana-2', 'Nano Banana 2'),
   'gpt-image-2': gptSpec('gpt-image-2', 'GPT Image 2', GPT_QUALITIES),
   'gpt-image-2.5-sunburst': gptSpec('gpt-image-2.5-sunburst', 'GPT Image 2.5 Sunburst', GPT_25_QUALITIES),
   'gpt-image-2.5-flare': gptSpec('gpt-image-2.5-flare', 'GPT Image 2.5 Flare', GPT_25_QUALITIES),
@@ -190,16 +195,18 @@ export function modelChanges(
  * Le chemin est exprimé depuis la racine du corps ; `null` signale un réglage
  * qui n'a pas de champ dédié (il est fondu dans le prompt, comme la langue).
  */
+const GEMINI_PATHS: Partial<Record<PayloadParam, string | null>> = {
+  aspectRatio: 'config.imageConfig.aspectRatio',
+  resolution: 'config.imageConfig.imageSize',
+  batch: 'config.candidateCount',
+  seed: 'config.seed',
+  personGeneration: 'config.personGeneration',
+  language: null,
+  extraParams: null,
+}
+
 const PARAM_PATHS: Record<AdapterId, Partial<Record<PayloadParam, string | null>>> = {
-  'nano-banana-2': {
-    aspectRatio: 'config.imageConfig.aspectRatio',
-    resolution: 'config.imageConfig.imageSize',
-    batch: 'config.candidateCount',
-    seed: 'config.seed',
-    personGeneration: 'config.personGeneration',
-    language: null,
-    extraParams: null,
-  },
+  'nano-banana-2': GEMINI_PATHS,
   'gpt-image-2': {
     aspectRatio: 'size',
     resolution: 'quality',

@@ -12,7 +12,7 @@ export function buildPayload(request: GenerationRequest): AdapterPayload {
     case 'gpt-image-2': return buildGptImage2Payload(request)
     case 'gpt-image-2.5-sunburst': return buildGptImage25SunburstPayload(request)
     case 'gpt-image-2.5-flare': return buildGptImage25FlarePayload(request)
-    default: return buildNanoBanana2Payload(request)
+    case 'nano-banana-2': return buildNanoBanana2Payload(request)
   }
 }
 

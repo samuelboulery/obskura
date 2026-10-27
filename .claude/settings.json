@@ -1,13 +1,12 @@
 {
-  "model": "claude-sonnet-4-6",
   "permissions": {
     "allow": [
-      "Bash(npm run dev:*)",
-      "Bash(npm run build:*)",
-      "Bash(npm run lint:*)",
-      "Bash(npm run type-check:*)",
-      "Bash(npm install:*)",
-      "Bash(npx create-next-app:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm dlx create-next-app:*)",
       "Bash(git:*)"
     ]
   }

@@ -13,7 +13,6 @@ import { DEFAULT_PARAMS, DEFAULT_RECIPE_STATE, normalizeParams, type RecipeState
 import { createRecipe } from './recipes'
 import { atelierReducer, initialAtelierState } from './reducer'
 import {
-  DEFAULT_PREFS,
   readJson,
   readPrefs,
   readString,
@@ -88,20 +87,24 @@ export function useAtelier() {
   const [prompt, setPrompt] = useState('')
   const [negative, setNegative] = useState('')
   const [promptSuffix, setPromptSuffix] = useState('')
-  const [params, setParams] = useState<GenerationParams>(DEFAULT_PARAMS)
+  const [params, setParams] = useState<GenerationParams>(() => normalizeParams(readJson<unknown>(STORAGE_KEYS.params, null)))
   const [recipe, setRecipe] = useState<RecipeState>(DEFAULT_RECIPE_STATE)
-  const [items, setItems] = useState<GalleryItem[]>([])
+  const [items, setItems] = useState<GalleryItem[]>(() => readJson<GalleryItem[]>(STORAGE_KEYS.session, []))
   const [pending, setPending] = useState<PendingTile[]>([])
   const [failures, setFailures] = useState<FailedRun[]>([])
-  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [recipes, setRecipes] = useState<Recipe[]>(() => readJson<Recipe[]>(STORAGE_KEYS.recipes, []))
   const [activeRecipeId, setActiveRecipeId] = useState<string | null>(null)
-  const [keys, setKeys] = useState<Record<KeyKind, string>>({ gemini: '', openai: '', text: '' })
-  const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS)
+  const [keys, setKeys] = useState<Record<KeyKind, string>>(() => ({
+    gemini: readString(STORAGE_KEYS.geminiKey),
+    openai: readString(STORAGE_KEYS.openaiKey),
+    text: readString(STORAGE_KEYS.textKey),
+  }))
+  const [prefs, setPrefs] = useState<Prefs>(() => readPrefs())
   const [notice, setNotice] = useState<Notice | null>(null)
   const [enriching, setEnriching] = useState(false)
   /** Ce que le dernier changement de modèle a ajouté ou retiré de l'inspecteur. */
   const [modelNote, setModelNote] = useState<ModelNote | null>(null)
-  const [hydrated, setHydrated] = useState(false)
+  const hydrated = true
   /**
    * Ce que la dernière écriture a réellement gardé. On ne retient que les
    * compteurs : garder les items doublerait la mémoire.
@@ -117,23 +120,9 @@ export function useAtelier() {
 
   const activeRecipe = recipes.find((entry) => entry.id === activeRecipeId) ?? null
 
-  // Relecture du navigateur au montage : aucun appel serveur.
+  // La scène reprend sur la dernière image plutôt que sur l'accueil.
   useEffect(() => {
-    const stored = {
-      gemini: readString(STORAGE_KEYS.geminiKey),
-      openai: readString(STORAGE_KEYS.openaiKey),
-      text: readString(STORAGE_KEYS.textKey),
-    }
-    keysRef.current = stored
-    setKeys(stored)
-    setPrefs(readPrefs())
-    setParams(normalizeParams(readJson<unknown>(STORAGE_KEYS.params, null)))
-    const session = readJson<GalleryItem[]>(STORAGE_KEYS.session, [])
-    setItems(session)
-    // La scène reprend sur la dernière image plutôt que sur l'accueil.
-    if (session[0]) dispatch({ type: 'arrived', ids: [session[0].id] })
-    setRecipes(readJson<Recipe[]>(STORAGE_KEYS.recipes, []))
-    setHydrated(true)
+    if (items[0]) dispatch({ type: 'arrived', ids: [items[0].id] })
   }, [])
 
   useEffect(() => {
@@ -143,6 +132,7 @@ export function useAtelier() {
   useEffect(() => {
     if (!hydrated) return
     const written = writeSession(items)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPersisted({ kept: written.items.length, fullCount: written.fullCount })
   }, [items, hydrated])
 

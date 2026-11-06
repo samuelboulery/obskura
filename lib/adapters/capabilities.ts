@@ -14,6 +14,8 @@ export const ADAPTERS = [
   'gpt-image-2',
   'gpt-image-2.5-sunburst',
   'gpt-image-2.5-flare',
+  'gpt-image-2.6-sunburst',
+  'gpt-image-2.6-flare',
 ] as const
 
 export const ALL_PARAMS: readonly PayloadParam[] = [
@@ -135,6 +137,8 @@ export const MODELS: Record<AdapterId, ModelSpec> = {
   'gpt-image-2': gptSpec('gpt-image-2', 'GPT Image 2', GPT_QUALITIES),
   'gpt-image-2.5-sunburst': gptSpec('gpt-image-2.5-sunburst', 'GPT Image 2.5 Sunburst', GPT_25_QUALITIES),
   'gpt-image-2.5-flare': gptSpec('gpt-image-2.5-flare', 'GPT Image 2.5 Flare', GPT_25_QUALITIES),
+  'gpt-image-2.6-sunburst': gptSpec('gpt-image-2.6-sunburst', 'GPT Image 2.6 Sunburst', GPT_25_QUALITIES),
+  'gpt-image-2.6-flare': gptSpec('gpt-image-2.6-flare', 'GPT Image 2.6 Flare', GPT_25_QUALITIES),
 }
 
 /** Libellés courts des réglages, pour les écarts entre deux générations. */
@@ -233,6 +237,28 @@ const PARAM_PATHS: Record<AdapterId, Partial<Record<PayloadParam, string | null>
     extraParams: null,
   },
   'gpt-image-2.5-flare': {
+    aspectRatio: 'size',
+    resolution: 'quality',
+    batch: 'n',
+    fileFormat: 'output_format',
+    transparent: 'background',
+    compression: 'output_compression',
+    moderation: 'moderation',
+    language: null,
+    extraParams: null,
+  },
+  'gpt-image-2.6-sunburst': {
+    aspectRatio: 'size',
+    resolution: 'quality',
+    batch: 'n',
+    fileFormat: 'output_format',
+    transparent: 'background',
+    compression: 'output_compression',
+    moderation: 'moderation',
+    language: null,
+    extraParams: null,
+  },
+  'gpt-image-2.6-flare': {
     aspectRatio: 'size',
     resolution: 'quality',
     batch: 'n',

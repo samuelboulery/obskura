@@ -12,6 +12,8 @@ export const DEFAULT_PRICING: Pricing = {
   'gpt-image-2': 0.04,
   'gpt-image-2.5-sunburst': 0.07,
   'gpt-image-2.5-flare': 0.07,
+  'gpt-image-2.6-sunburst': 0.07,
+  'gpt-image-2.6-flare': 0.07,
 }
 
 /** Estimation locale : tarif du modèle × nombre de variantes. */
